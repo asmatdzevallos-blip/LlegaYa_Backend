@@ -131,6 +131,25 @@ class CambiarRolView(APIView):
             return Response({'error': 'Rol inválido'}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ToggleEstadoUsuarioView(APIView):
+    """
+    PUT /api/auth/admin/usuarios/<id>/estado/
+    Activa o desactiva a un usuario (Soft Delete).
+    Requiere: rol admin.
+    """
+    permission_classes = [IsAuthenticated, EsAdmin]
+
+    def put(self, request, pk):
+        try:
+            usuario = Usuario.objects.get(pk=pk)
+            usuario.activo = not usuario.activo
+            usuario.save()
+            
+            estado_str = "activado" if usuario.activo else "desactivado"
+            return Response({'mensaje': f'Usuario {usuario.nombre} ha sido {estado_str}'})
+        except Usuario.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
 # ──────────────────────────────────────────
 # NEGOCIOS
 # ──────────────────────────────────────────

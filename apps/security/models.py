@@ -40,10 +40,10 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     telefono     = models.CharField(max_length=20, blank=True)
     rol          = models.ForeignKey(Rol, on_delete=models.SET_NULL, null=True, blank=True)
     activo       = models.BooleanField(default=True)
-    is_active    = models.BooleanField(default=True)  # requerido por Django
-    is_staff     = models.BooleanField(default=False)  # requerido por Django
+    is_active    = models.BooleanField(default=True)  
+    is_staff     = models.BooleanField(default=False)  
     created_at   = models.DateTimeField(auto_now_add=True)
-
+    
     objects = UsuarioManager()
 
     USERNAME_FIELD  = 'email'
