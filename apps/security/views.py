@@ -5,6 +5,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.parsers import MultiPartParser, FormParser
+import os
 
 from .models import Usuario, Rol, Negocio, Producto, Pedido, DetallePedido
 from .serializers import (
@@ -287,3 +289,33 @@ class ActualizarEstadoPedidoView(APIView):
             return Response({'mensaje': f'Pedido #{pedido.id} actualizado a {nuevo_estado}'})
         except Pedido.DoesNotExist:
             return Response({'error': 'Pedido no encontrado o no te pertenece'}, status=status.HTTP_404_NOT_FOUND)
+
+
+# ──────────────────────────────────────────
+# PERFIL
+# ──────────────────────────────────────────
+
+class SubirFotoPerfilView(APIView):
+    """
+    POST /api/auth/perfil/foto/
+    Sube o reemplaza la foto de perfil del usuario autenticado.
+    """
+    permission_classes = [IsAuthenticated]
+    parser_classes     = [MultiPartParser, FormParser]
+
+    def post(self, request):
+        user = request.user
+        if 'foto' not in request.FILES:
+            return Response({'error': 'No se envió ninguna imagen.'}, status=400)
+
+        # Borrar foto anterior si existe
+        if user.foto:
+            if os.path.isfile(user.foto.path):
+                os.remove(user.foto.path)
+
+        user.foto = request.FILES['foto']
+        user.save()
+        return Response({
+            'mensaje': 'Foto actualizada correctamente.',
+            'foto': request.build_absolute_uri(user.foto.url)
+        })

@@ -6,6 +6,7 @@ from .views import (
     MiNegocioView, ListaNegociosView,
     ProductosNegocioView,
     MisPedidosView, AsignarRepartidorView, ActualizarEstadoPedidoView,
+    SubirFotoPerfilView
 )
 
 urlpatterns = [
@@ -27,4 +28,6 @@ urlpatterns = [
     path('pedidos/',                        MisPedidosView.as_view(),             name='mis-pedidos'),
     path('pedidos/<int:pk>/asignar/',       AsignarRepartidorView.as_view(),      name='asignar-repartidor'),
     path('pedidos/<int:pk>/estado/',        ActualizarEstadoPedidoView.as_view(), name='actualizar-estado'),
+    #Perfil
+    path('perfil/foto/', SubirFotoPerfilView.as_view(), name='subir-foto-perfil'),
 ]
